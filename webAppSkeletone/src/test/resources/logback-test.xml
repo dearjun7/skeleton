@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+               xsi:noNamespaceSchemaLocation="http://www.padual.com/java/logback.xsd"
+               debug="true" scan="true" scanPeriod="1 minutes">
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [%logger] - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<logger name="com.hs.gms.srv.api" level="DEBUG" />
+	<logger name="com.hs.gms.std.common.datasource.aspectj" level="DEBUG" />
+	
+	<!-- Spring Framework -->
+	<logger name="org.springframework" level="INFO" />
+	<logger name="org.springframework.core" level="INFO" />
+	<logger name="org.springframework.beans" level="INFO" />
+	<logger name="org.springframework.context" level="INFO" />
+	<logger name="org.springframework.web" level="INFO" />
+	
+	<!-- apache commons -->
+	<logger name="org.apache.commons" level="INFO" />
+	<logger name="org.apache.http" level="INFO" />
+	
+	<!-- apache commons -->
+	<logger name="org.apache.http.wire" level="INFO" />
+	
+	<!-- MyBatis -->
+	<logger name="org.mybatis" level="DEBUG" />
+	<logger name="org.apache.ibatis" level="INFO" />
+
+	<root level="DEBUG">
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+			 xmlns:oxm="http://www.springframework.org/schema/oxm"
+			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			 xmlns:beans="http://www.springframework.org/schema/beans"
+			 xmlns:context="http://www.springframework.org/schema/context"
+			 xmlns:tx="http://www.springframework.org/schema/tx"
+			 xmlns:aop="http://www.springframework.org/schema/aop"
+			 xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+							  	 http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-3.1.xsd
+								 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+								 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+								 http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+								 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<context:component-scan base-package="com.hs.gms" />
+	
+	<context:property-placeholder properties-ref="config" />
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven validator="validator"/>
+	
+	<!-- AOP 사용 설정 -->
+	<aop:aspectj-autoproxy />
+	
+	<!-- Transaction AOP Advice 설정 -->
+	<tx:annotation-driven proxy-target-class="true"/>
+	<tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="get*"     propagation="SUPPORTS" read-only="true" />
+			<tx:method name="create*"  propagation="REQUIRED" rollback-for="Throwable" />
+			<tx:method name="modify*"  propagation="REQUIRED" rollback-for="Throwable" />
+			<tx:method name="remove*"  propagation="REQUIRED" rollback-for="Throwable" />
+		</tx:attributes>
+	</tx:advice>
+	
+	<!-- Transaction AOP 설정 -->	
+	<aop:config proxy-target-class="true">
+		<aop:pointcut id="requiredTransaction"
+			expression="execution(* com.hs.gms.srv.api..*ServiceImpl.*(..))" />
+		<aop:advisor advice-ref="transactionAdvice" pointcut-ref="requiredTransaction" />
+	</aop:config>
+	
+	<beans:bean id="springApplicationContext" class="com.hs.gms.std.common.service.bean.SpringApplicationContext"/>
+	
+	<beans:bean id="authorizedMenuSource" class="com.hs.gms.srv.api.auth.menu.AuthorizedMenuSource" init-method="init">
+		<beans:property name="reload" value="true"/>
+	</beans:bean>
+	
+	<beans:bean id="codeAccessSource" class="com.hs.gms.srv.api.system.code.CodeAccessSource" init-method="init">
+		<beans:property name="reload" value="true" />
+	</beans:bean>
+	
+	<beans:bean id="issueCreateEventGenerator" class="com.hs.gms.srv.api.notification.event.issue.IssueCreateEventGenerator" />
+	
+	<!-- Interceptor 설정 -->
+	<interceptors>
+		<interceptor>
+			<mapping path="/**"/>
+			<beans:bean id="localeChangeInterceptor" class="com.hs.gms.std.common.service.i18n.GMSLocaleChangeInterceptor">
+				<beans:property name="paramName" value="lang" />
+			</beans:bean>
+		</interceptor>
+		
+		<interceptor>
+			<mapping path="/**"/>
+			<exclude-mapping path="/health/check"/>
+			<exclude-mapping path="/account/login*"/>
+			<exclude-mapping path="/modeler/accesstoken*"/>
+			<exclude-mapping path="/error/**"/>
+			<beans:bean class="com.hs.gms.srv.api.account.interceptor.CertifyInterceptor">
+				<beans:property name="accessTokenName" value="#{config['gms.cookie.token.name']}"/>
+				<beans:property name="allowDomain" value="#{config['gms.cookie.token.allow_domain']}"/>
+				<beans:property name="localeName" value="#{config['gms.cookie.locale.name']}"/>
+				<beans:property name="tokenExpireMinuteTime" value="#{config['gms.cookie.token.expire_minutes']}"/>
+			</beans:bean>
+		</interceptor>
+	</interceptors>
+
+	<beans:bean id="filterMultipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"> 
+	</beans:bean> 
+	
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver" />
+	
+	<beans:bean class="com.hs.gms.std.common.error.resolver.GMSExceptionResolver"/>
+	
+	<beans:bean id="localeResolver" class="com.hs.gms.std.common.service.i18n.GMSCookieLocaleResolver">
+		<beans:property name="cookieName" value="#{config['gms.cookie.locale.name']}"/>
+		<beans:property name="cookieMaxAge" value="#{config['gms.cookie.locale.expire_time']}"/>
+		<beans:property name="cookieDomain" value="#{config['gms.cookie.token.allow_domain']}" />
+		<beans:property name="cookiePath" value="/"/>
+		<beans:property name="defaultLocaleLang" value="ko"/>
+		<beans:property name="supportedLocale" value="en,ko,zh,ja"/>
+	</beans:bean>
+	
+	<beans:bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+	    <beans:property name="order" value="1"/>
+	    <beans:property name="contentNegotiationManager">
+	        <beans:bean class="org.springframework.web.accept.ContentNegotiationManager">
+	            <beans:constructor-arg>
+	                <beans:bean class="org.springframework.web.accept.PathExtensionContentNegotiationStrategy">
+	                    <beans:constructor-arg>
+	                        <beans:map>
+	                            <beans:entry key="json" value="application/json"/>
+	                            <beans:entry key="html" value="application/json"/>
+	                            <beans:entry key="png"  value="application/json"/>
+	                            <beans:entry key="jpg"  value="application/json"/>
+	                            <beans:entry key="jpeg" value="application/json"/>
+	                            <beans:entry key="jpe"  value="application/json"/>
+	                            <beans:entry key="gif"  value="application/json"/>
+	                            <beans:entry key="bmp"  value="application/json"/>
+	                            <beans:entry key="js"   value="application/json"/>
+	                            <beans:entry key="css"  value="application/json"/>
+	                        </beans:map>
+	                    </beans:constructor-arg>
+	                </beans:bean>
+	            </beans:constructor-arg>
+	        </beans:bean>
+	    </beans:property>
+ 
+	    <beans:property name="defaultViews">
+	    	<beans:list>
+	            <!-- JSON View -->
+	            <beans:bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" />
+            	<!-- XML View -->
+	            <beans:bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+	                <beans:property name="marshaller" ref="marshaller" />
+	            </beans:bean>
+            </beans:list>
+	    </beans:property>
+    </beans:bean>
+    
+    <oxm:jaxb2-marshaller id="marshaller">
+     	<oxm:class-to-be-bound name="com.hs.gms.std.common.response.ResponsePaginationBodyVO" />
+    	<oxm:class-to-be-bound name="com.hs.gms.std.common.response.ResponseHeaderVO" />
+    	<oxm:class-to-be-bound name="com.hs.gms.std.common.response.ResponseBodyVO" />
+    	<oxm:class-to-be-bound name="com.hs.gms.std.common.response.ResponseVO" />
+    	<oxm:class-to-be-bound name="com.hs.gms.std.common.response.ErrorResponseBodyVO" />
+    	<oxm:class-to-be-bound name="com.hs.gms.std.common.response.ErrorResponseVO" />
+	</oxm:jaxb2-marshaller>
+	
+</beans:beans>

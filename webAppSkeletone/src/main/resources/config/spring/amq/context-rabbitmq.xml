@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd
+					    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+					    http://www.springframework.org/schema/rabbit  http://www.springframework.org/schema/rabbit/spring-rabbit.xsd">
+	
+	<rabbit:connection-factory id="rabbitConnectionFactory" 
+							   host="#{config['gms.rabbitmq.connection.host']}" 
+							   port="#{config['gms.rabbitmq.connection.port']}" 
+							   username="#{config['gms.rabbitmq.connection.username']}" 
+							   password="#{config['gms.rabbitmq.connection.password']}"/>
+							   
+	<rabbit:admin id="admin" connection-factory="rabbitConnectionFactory"/>
+	
+	<rabbit:queue name="IssueReqEvent" declared-by="admin"/>
+	<!-- rabbit:queue name="ChangeReqEvent"/>
+	<rabbit:queue name="ProcEvent"/>
+	<rabbit:queue name="NoticeEvent"/-->
+	
+	<rabbit:direct-exchange name="amq.direct" auto-delete="false" declared-by="admin">
+		<rabbit:bindings>
+			<rabbit:binding key="issueReqEvent"  queue="IssueReqEvent"/>
+			<!-- rabbit:binding key="changeReqEvent" queue="ChangeReqEvent"/>
+			<rabbit:binding key="procEvent"      queue="ProcEvent"/>
+			<rabbit:binding key="noticeEvent"    queue="NoticeEvent"/-->
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+	
+	<rabbit:template id="rabbitTemplate" connection-factory="rabbitConnectionFactory" exchange="amq.direct"/>
+	
+	<bean id="retryTemplate" class="org.springframework.retry.support.RetryTemplate">
+		<property name="backOffPolicy">
+			<bean class="org.springframework.retry.backoff.ExponentialBackOffPolicy">
+				<property name="initialInterval" value="#{config['gms.rabbitmq.retry.initialinterval']}"/>
+				<property name="multiplier" value="#{config['gms.rabbitmq.retry.multiplier']}"/>
+				<property name="maxInterval" value="#{config['gms.rabbitmq.retry.maxinterval']}"/>
+			</bean>
+		</property>
+		<property name="retryPolicy">
+			<bean class="org.springframework.retry.policy.SimpleRetryPolicy">
+				<property name="maxAttempts" value="#{config['gms.rabbitmq.retry.maxattempts']}"/>
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="recoverer" class="org.springframework.amqp.rabbit.retry.RejectAndDontRequeueRecoverer"/>
+	
+	<bean id="retryInterceptor" 
+        class="org.springframework.amqp.rabbit.config.StatelessRetryOperationsInterceptorFactoryBean">
+        <property name="messageRecoverer" ref="recoverer"/>
+        <property name="retryOperations" ref="retryTemplate"/>
+    </bean>
+	
+	<rabbit:listener-container connection-factory="rabbitConnectionFactory" advice-chain="retryInterceptor">
+		<rabbit:listener queues="IssueReqEvent"  ref="issueReqEventHandler"  method="handleMessage"/>
+		<!-- rabbit:listener queues="ChangeReqEvent" ref="changeReqEventHandler" method="handleMessage"/>
+		<rabbit:listener queues="ProcEvent"      ref="procEventHandler"      method="handleMessage"/>
+		<rabbit:listener queues="NoticeEvent"    ref="noticeEventHandler"    method="handleMessage"/-->
+	</rabbit:listener-container>
+</beans>

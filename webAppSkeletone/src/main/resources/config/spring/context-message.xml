@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	
+	<!-- Message Source -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>classpath:/config/menu/menu-names</value>
+				<value>classpath:/config/workrequest/isointro/view/apply_view_aliases</value>
+				<value>classpath:/config/workrequest/isointro/view/systable_view_aliases</value>
+				<value>classpath:/config/workrequest/isointro/view/businproc_view_aliases</value>
+				<value>classpath:/config/workrequest/isointro/view/mngsys_view_aliases</value>
+				<value>classpath:/message/common-messages</value>
+				<value>classpath:/message/error/error-common</value>
+				<value>classpath:/message/validation/validation-messages</value>
+				<value>classpath:/message/validation/proc/proc-validation-messages</value>
+			</list>
+		</property>
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="cacheSeconds">
+			<value>60</value>
+		</property>
+	</bean>
+	
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="validationMessageSource" ref="messageSource"/>
+	</bean>
+</beans>

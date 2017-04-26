@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<preference>
+	<option>
+		<userId><![CDATA[]]></userId>
+		<tenantId><![CDATA[]]></tenantId>
+	    <language><![CDATA[]]></language>
+	    <useAdditionalInfo><![CDATA[false]]></useAdditionalInfo>
+	    <isCenterNamePosition><![CDATA[false]]></isCenterNamePosition>
+	    <allowMultiStart><![CDATA[true]]></allowMultiStart>
+	    <allowAtomicLevel><![CDATA[2]]></allowAtomicLevel>
+	    <allowDupActivityName><![CDATA[false]]></allowDupActivityName>
+	    <allowRecursiveLink><![CDATA[true]]></allowRecursiveLink>
+	    <markNotAssociatedData><![CDATA[false]]></markNotAssociatedData>
+	    <markNotAssociatedEvent><![CDATA[false]]></markNotAssociatedEvent>
+	    <markLevelToNotation><![CDATA[false]]></markLevelToNotation>
+	    <useCriticalPath><![CDATA[false]]></useCriticalPath>
+	    <additionalInfoFontFace><![CDATA[Verdana]]></additionalInfoFontFace>
+	    <additionalInfoFontSize><![CDATA[9]]></additionalInfoFontSize>
+	    <notationFontFace><![CDATA[Verdana]]></notationFontFace>
+	    <notationFontSize><![CDATA[10]]></notationFontSize>
+	    <expandableSubprocess><![CDATA[false]]></expandableSubprocess>
+	    <allowMultiInOutGateway><![CDATA[true]]></allowMultiInOutGateway>
+	    <aliasOption><![CDATA[false]]></aliasOption>
+	    <modelerHelp><![CDATA[/files/manual/HANDY_GMS_Manual.pdf]]></modelerHelp>
+	    <gridInterval><![CDATA[3,3]]></gridInterval>
+	    <useFullSearch4CP><![CDATA[false]]></useFullSearch4CP>
+	    <setTempSaveInterval><![CDATA[300]]></setTempSaveInterval>
+	    <custAnnotationShow><![CDATA[false]]></custAnnotationShow>
+	    <custAnnotationPosition><![CDATA[0]]></custAnnotationPosition>
+	    <custAnnotationAlign><![CDATA[3]]></custAnnotationAlign>
+	    <useClassificationTree><![CDATA[false]]></useClassificationTree>
+	    <treeViewLevel><![CDATA[1]]></treeViewLevel>
+	</option>
+	<requestUrl>
+	    <activityInfo><![CDATA[/index-modeler.html#/modeler/procs/%PROCESSID%/%PROCVERSION%/procacts/%ACTDEFSEQ%/usageType/%USAGETYPE%]]></activityInfo>
+	    <transitionInfo><![CDATA[/index-modeler.html#/modeler/procs/%PROCESSID%/%PROCVERSION%/proctranses/%TRANSDEFSEQ%/usageType/%USAGETYPE%]]></transitionInfo>
+        <validateResult><![CDATA[/index-modeler.html#/modeler/procs/valid/%PROCESSID%/usageType/%USAGETYPE%]]></validateResult>
+	    <swimlaneInfo><![CDATA[/procmodel/modeler/swimdetail.jsp?mdlprocessid=%PROCESSID%&mdlversion=%PROCVERSION%&manid=%OBJSEQ%&caller=modeler&readonly=n]]></swimlaneInfo>
+	    <activityInfoView><![CDATA[/procmodel/modeler/actdetail.jsp?mdlprocessid=%PROCESSID%&mdlversion=%PROCVERSION%&manid=%ACTDEFSEQ%&caller=graph&readonly=y&mode=load]]></activityInfoView>
+	    <transitionInfoView><![CDATA[/procmodel/modeler/transdetail.jsp?mdlprocessid=%PROCESSID%&mdlversion=%PROCVERSION%&manid=%TRANSDEFSEQ%&caller=graph&readonly=y&mode=load]]></transitionInfoView>
+	    <swimlaneInfoView><![CDATA[/procmodel/modeler/swimdetail.jsp?mdlprocessid=%PROCESSID%&mdlversion=%PROCVERSION%&manid=%OBJSEQ%&caller=graph&readonly=y&mode=load]]></swimlaneInfoView>
+	    <procDetail><![CDATA[/procmodel/detail/proc_detail.jsp?processid=%PROCESSID%&openmode=popup&caller=subprocessedit]]></procDetail>
+	    <selectTree><![CDATA[/procmodel/masterdetail/select_mastertree.jsp?procmodelgroupid=%PROCMODELGROUPID%&initparam=y&selecttype=callmap&selectedid=%PROCESSID%&mdlprocessid=%PROCESSID%&mdlversion=%PROCVERSION%]]></selectTree>
+	    <requestModel><![CDATA[/procmodel/modeler/requestmodel.jsp?palid=%PALID%&openmodelid=%PROCESSID%&openmode=directcall&mdlprocessid=%PROCESSID%&mdlversion=%PROCVERSION%]]></requestModel>
+	    <showSharedProcess><![CDATA[/procmodel/modeler/sharedproclist.jsp?palid=%PALID%&acttype=%TYPE%&mdlprocessid=%PROCESSID%&mdlversion=%PROCVERSION%]]></showSharedProcess>
+	    <showSummary><![CDATA[/procmodel/modeler/summarymodel.jsp?palidlist=%PALIDLIST%&acttype=%TYPE%&mdlprocessid=%PROCESSID%&mdlversion=%PROCVERSION%]]></showSummary>
+	    <showUpperAssocProcess><![CDATA[/procmodel/list/upper_assc_proc_list.jsp?procmodelid=%PROCESSID%]]></showUpperAssocProcess>
+	    <selectAutoDraw><![CDATA[/procmodel/modeler/select_procmodel_autodrawing.jsp?procmodelgroupid=%PROCMODELGROUPID%&initparam=y&selecttype=proc&selectmode=multi&selectedid=%PROCESSID%]]></selectAutoDraw>
+	</requestUrl>
+	<contextMenu>
+	    <showSharedProcess menuNotationType="W,P,B,A,N,Q,XJ" menuGroup="false" menuEqualType="false" menuLabel="공유 프로세스" />
+	    <showSummary menuNotationType="W,P,B,A,N" menuGroup="true" menuEqualType="true" menuLabel="속성 요약 보기" />
+	    <showUpperAssocProcess menuNotationType="PROC" menuGroup="false" menuEqualType="false" menuLabel="상위 연관 프로세스 보기" />
+	    <swimlaneInfoView menuNotationType="SWIMLANEINFOVIEW" menuGroup="false" menuEqualType="false" menuLabel="레인 정보 보기" />
+	</contextMenu>
+</preference>        

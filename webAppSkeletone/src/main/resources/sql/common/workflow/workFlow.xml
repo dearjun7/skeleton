@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="common.workflow.workFlow">
+	<select id="selectWorkRequest" parameterType="map" resultType="com.hs.gms.srv.api.common.workflow.vo.WorkRequestVO">
+		SELECT  wr.workrequestid, 		wr.tenantid, 			wr.requesttitle,        wr.requestdate,  	
+				wr.requestor,			wr.requestorname,		wr.requestdeptid, 		wr.requestdeptname,	
+				wr.requestdesc, 		wr.workstate, 			wr.workprocesstype		
+		  FROM	gms_workrequest wr
+		 WHERE  wr.tenantid = #{tenantId}
+	  	   AND  wr.workrequestid = #{workRequestId}
+	</select>
+	
+	<insert id="insertWorkRequest" parameterType="com.hs.gms.srv.api.common.workflow.vo.WorkRequestVO">
+		INSERT INTO gms_workrequest
+			(
+			    workrequestid, 		    tenantid, 				requesttitle, 			requestdate, 			
+				requestdesc, 			workstate, 			    workprocesstype,
+			    requestor,				requestorname,          requestdeptid, 			
+			    requestdeptname 		
+			) 
+		VALUES 
+			(
+				#{workRequestId}, 	    #{tenantId}, 			#{requestTitle}, 		#{requestDate}, 
+				#{requestDesc}, 		#{workState}, 		    #{workProcessType},
+				#{requestor},			#{requestorName},      	#{requestDeptId}, 
+				(
+					<include refid="common.sql.selectDeptName">
+	 		   	 		<property name="userId" value="#{requestor}"/>
+	 		   	 		<property name="tenantId" value="#{tenantId}"/>
+	 		   	 	</include>
+				)
+			)
+	</insert>
+	
+	<update id="updateWorkRequest" parameterType="com.hs.gms.srv.api.common.workflow.vo.WorkRequestVO">
+		UPDATE	gms_workrequest
+				<set>
+					<if test="requestTitle != null">		requesttitle			= #{requestTitle}, </if>
+					<if test="workState != null">		    workstate			    = #{workState},</if>
+					<if test="requestDesc != null">			requestdesc				= #{requestDesc},</if>
+					<if test="workProcessType != null">	    workprocesstype		    = #{workProcessType},</if>
+					<if test="requestor != null">
+						requestdate = #{requestDate}, requestor = #{requestor}, requestorname = #{requestorName}, requestdeptid = #{requestDeptId}, 
+						requestdeptname = (
+											<include refid="common.sql.selectDeptName">
+						 			   	 		<property name="userId" value="#{requestor}"/>
+					 				   	 		<property name="tenantId" value="#{tenantId}"/>
+					 			    		</include>
+							 			 )
+					</if>
+				</set>
+
+	     WHERE tenantid      = #{tenantId} 
+	       AND workrequestid = #{workRequestId}
+	</update>
+	
+	<delete id="deleteWorkRequest" parameterType="map">
+		DELETE
+		  FROM gms_workrequest
+		 WHERE workrequestid = #{workRequestId}
+		   AND tenantid      = #{tenantId}
+	</delete>
+	
+	<select id="selectWorkItem" parameterType="map" resultType="com.hs.gms.srv.api.common.workflow.vo.WorkItemVO">
+		SELECT  wi.workrequestid, 	wi.workseq, 			wi.prtcp, 				wi.prtcptype, 				wi.prtcpname, 
+				wr.workstate, 		wi.workaction, 			wi.checkoutuserid, 		wi.workitemstate, 			wi.worker, 
+				wi.workername, 		wi.workdeptid, 			wi.workdeptname, 		wi.workdesc, 				wi.createdate, 
+				wi.cmpltdate
+		  FROM	gms_workitem wi INNER JOIN gms_workrequest wr
+                                        ON wi.tenantid = wr.tenantid
+ 								   	   AND wi.workrequestid = wr.workrequestid
+		 WHERE wi.tenantid = #{tenantId}
+		   AND wi.workitemstate = #{workItemState}
+	   <if test="workRequestId != null">
+		   AND wi.workrequestid = #{workRequestId}
+	   </if>
+	   <if test="workState != null">
+		   AND wr.workstate = #{workState}
+	   </if>
+	</select>
+	
+	<select id="selectWorkHistory" parameterType="map" resultType="com.hs.gms.srv.api.common.workflow.vo.WorkItemVO">
+		SELECT wi.workrequestid, 	wi.workseq, 			wi.prtcp, 				wi.prtcptype, 				wi.prtcpname, 
+			   wr.workstate, 	    wi.workaction, 			wi.checkoutuserid, 		wi.workitemstate, 			wi.worker, 
+			   wi.workername, 		wi.workdeptid, 			wi.workdeptname, 		wi.workdesc, 				wi.createdate, 
+			   wi.cmpltdate,        
+			   c1.codename AS workstatename,
+			   c2.codename AS workactionname
+		  FROM gms_workrequest wr INNER JOIN gms_workitem wi
+		                                  ON wr.workrequestid = wi.workrequestid
+		                                 AND wr.tenantid = wi.tenantid
+		                          INNER JOIN gms_codelang c1
+		                                  ON wr.workstate = c1.code
+		                                 AND c1.tenantId = #{systemTenantId}
+		                                 AND c1.pcode in (SELECT tc.code FROM gms_code tc where tc.pcode = wr.workprocesstype)
+		                          INNER JOIN gms_codelang c2
+		                                  ON wi.workaction = c2.code
+		                                 AND c2.tenantId = c1.tenantId
+		                                 AND c2.pcode = 'GMS_WORKACTION'
+		 WHERE wr.tenantid = #{tenantId}
+		   AND c1.lang     = c2.lang
+		   AND c1.lang     = #{language}
+		   AND wr.workrequestid = #{workRequestId}
+		   AND wi.workitemstate = 'C'
+		   AND wi.workaction != 'Progress'
+		 ORDER BY wi.createdate ASC
+	</select>
+	
+	<select id="selectWorkItemParticipantUserCount" parameterType="map" resultType="int">
+		SELECT  COUNT(*) 
+		  FROM  gms_workitem wi INNER JOIN gms_workrequest wr
+                                        ON wi.tenantid = wr.tenantid
+ 								   	   AND wi.workrequestid = wr.workrequestid
+		 WHERE  wr.tenantid      = #{tenantId}  
+		   AND  wi.workrequestid = #{workRequestId}
+	   <if test="workItemState != null">
+		   AND  wi.workitemstate = #{workItemState}
+	   </if>
+		   AND  wi.workstate     = #{workStateCode}
+		   AND  ((wi.prtcptype = 'U' AND wi.prtcp = #{userId}) 
+		        OR (wi.prtcptype = 'D' AND wi.prtcp = #{deptId}))
+	</select>
+	
+	<select id="selectWorkItemProgressDetailList" parameterType="map" resultType="com.hs.gms.srv.api.common.workflow.vo.WorkItemProgressDetailVO">
+		SELECT   
+				wi.cmpltdate,    wr.workstate,          cl1.codename AS workstatename, cl2.codename AS workactionname,
+				wi.workername,   wi.worker AS workerId, wi.workdeptname,                 
+				wi.workdeptid,   wi.workdesc
+		  FROM	gms_workitem wi INNER JOIN gms_workrequest wr
+                                        ON wi.tenantid = wr.tenantid
+ 								   	   AND wi.workrequestid = wr.workrequestid
+                                INNER JOIN gms_codelang cl1
+									    ON cl1.code = wr.workstate
+									   AND cl1.tenantid = #{systemTenantId}
+                                       AND cl1.pcode in (SELECT cd.code FROM gms_code cd WHERE pcode=wr.workprocesstype)
+								INNER JOIN gms_codelang cl2
+									    ON cl2.code = wi.workaction
+									   AND cl2.tenantid = cl1.tenantid
+                                       AND cl2.lang = cl1.lang
+                                       AND cl2.pcode = 'GMS_WORKACTION'
+                                       
+		 WHERE  wr.tenantid        = #{tenantId}
+           AND  cl1.lang           = #{language}
+           AND  wi.workrequestid   = #{workRequestId}
+           AND  wi.workaction     != 'Progress'
+	  ORDER BY  wi.workseq ASC;
+	</select>
+	
+	<insert id="insertWorkItem" parameterType="com.hs.gms.srv.api.common.workflow.vo.WorkItemVO">
+		INSERT INTO gms_workitem
+			(
+			    tenantid, 
+			    workrequestid, 		    workseq, 				prtcp, 					prtcpauth,      
+			    prtcptype, 				prtcpname,              workstate, 				workaction,    			
+			    checkoutuserid, 		workitemstate, 			worker,                 workername, 			
+			    workdeptid, 			workdeptname, 			workdesc, 				createdate, 
+				cmpltdate
+			) 
+		VALUES 
+			(
+				#{tenantId},
+				#{workRequestId}, 	(SELECT CASE WHEN MAX(w.workseq) IS NULL THEN 1 ELSE MAX(w.workseq) + 1 END FROM gms_workitem w WHERE w.workrequestid=#{workRequestId} AND w.tenantid = #{tenantId}),
+				#{prtcp}, 			#{prtcpAuth},			#{prtcpType}, 			#{prtcpName}, 
+				#{workState}, 		#{workAction}, 			#{checkoutUserId}, 		#{workItemState}, 			#{worker}, 
+				#{workerName}, 		#{workDeptId},
+				(
+					<include refid="common.sql.selectDeptName">
+	 		   	 		<property name="userId" value="#{worker}"/>
+	 		   	 		<property name="tenantId" value="#{tenantId}"/>
+	 		   	 	</include>
+				),				 		#{workDesc}, 			#{createDate}, 
+				#{cmpltDate}
+			)
+	</insert>
+	
+	<update id="updateWorkItem" parameterType="com.hs.gms.srv.api.common.workflow.vo.WorkItemVO">
+		UPDATE	gms_workitem
+				<set>
+					<if test="prtcp != null">			prtcp				= #{prtcp}, </if>
+					<if test="prtcpType != null">		prtcpType			= #{prtcpType},</if>
+					<if test="prtcpName != null">		prtcpName			= #{prtcpName},</if>
+					<if test="workState != null">	    workState			= #{workState},</if>
+					<if test="workAction != null">		workAction			= #{workAction},</if>
+					<if test="checkoutUserId != null">	checkoutUserId		= #{checkoutUserId},</if>
+					<if test="workItemState != null">	workItemState	    = #{workItemState},</if>
+					<if test="workDesc != null">		workDesc			= #{workDesc},</if>
+					<if test="createDate != null">		createDate			= #{createDate},</if>
+					<if test="cmpltDate != null">		cmpltDate			= #{cmpltDate},</if>
+					<if test="worker != null">
+						worker = #{worker}, workerName = #{workerName}, workDeptId = #{workDeptId}, 
+						workDeptName = (
+											<include refid="common.sql.selectDeptName">
+						 			   	 		<property name="userId" value="#{worker}"/>
+					 				   	 		<property name="tenantId" value="#{tenantId}"/>
+					 			    		</include>
+							 			)
+					</if>
+				</set>
+	     WHERE  workrequestid = #{workRequestId}
+	       AND  tenantid = #{tenantId}
+	       AND  workseq = #{workSeq}
+	</update>
+	
+	<delete id="deleteWorkItem" parameterType="map">
+		DELETE
+		  FROM gms_workitem
+		 WHERE workrequestid = #{workRequestId}
+		   AND tenantid = #{tenantId}
+	</delete>
+	
+	<select id="selectWorkRequestorYN" parameterType="map" resultType="int">
+		SELECT  COUNT(*) 
+		  FROM  gms_workrequest wr
+       	 WHERE  wr.workrequestid   = #{workRequestId}
+		   AND  wr.tenantid        = #{tenantId}
+		   AND  wr.requestor       = #{userId}
+	</select> 
+	
+	<select id="selectEnablePublishCount" parameterType="map" resultType="integer">
+		SELECT  COUNT(*)
+		  FROM  gms_workitem wi INNER JOIN gms_workrequest wr
+										ON wr.tenantid = wi.tenantid
+									   AND wr.workrequestid = wi.workrequestid
+		 WHERE  wi.tenantid           = #{tenantId}
+		   AND  wi.workrequestid      = #{workRequestId}
+		   AND  wr.workstate          = 'ApprovePublish'
+		   AND  wi.workitemstate      = 'I'  
+		   AND  wr.workprocesstype    = 'C'
+	</select>
+</mapper>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="account">
+	<resultMap id="selectUserInfoMap" type="com.hs.gms.srv.api.account.vo.LoginResponseVO">
+		<result property="name"     column="name" />
+		<result property="deptName" column="dept_name" />
+		<result property="picURL"   column="pic_url" />
+		<result property="picPath"  column="pic_path" />
+ 		<result property="posName"  column="pos_name" />
+		<result property="rankName" column="rank_name" />
+		<result property="dutyName" column="duty_name" />
+	</resultMap>
+	
+	<select id="selectUserAuth" parameterType="com.hs.gms.srv.api.account.vo.UserDataVO" resultType="string">
+		SELECT  a.auth
+		  FROM  usr_global u INNER JOIN usr_auth a
+							  		  ON a.user_id = u.user_id
+							 		 AND a.rel_id  = u.user_id
+		 WHERE  u.status NOT IN ('4','8')
+		   AND  u.user_id      = #{userId}
+		   AND  u.community_id = #{tenantId}
+	</select>
+	
+	<select id="selectUserInfo" parameterType="com.hs.gms.srv.api.account.vo.UserDataVO" resultMap="selectUserInfoMap">
+		SELECT 
+			    u.name,
+			    u.dept_name,
+			    p.pos_name,
+			    ra.rank_name,
+			    pic_path,
+			    duty_name
+		  FROM  usr_global u INNER JOIN dept_global d
+									 ON u.dept_id = d.dept_id
+							 INNER JOIN pos p
+							 		 ON u.pos_id = p.pos_id
+								   LEFT OUTER JOIN rank ra
+									 ON u.rank_id = ra.rank_id
+								   LEFT OUTER JOIN duty du
+									 ON u.duty_id = du.duty_id
+		 WHERE  u.status NOT IN ('4','8')
+		   AND  d.status NOT IN ('4','8')
+		   AND  u.user_id = #{userId}
+		   AND  u.community_id = #{tenantId}
+	</select>
+	
+	<update id="updateUserAccountLock" parameterType="string">
+		UPDATE  usr_global u
+		   SET  u.lock_f = '1'
+		 WHERE  u.e_mail = #{userEmail}
+	</update>
+</mapper>

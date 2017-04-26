@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beansProjectDescription>
+	<version>1</version>
+	<pluginVersion><![CDATA[3.7.1.201510041102-RELEASE]]></pluginVersion>
+	<configSuffixes>
+		<configSuffix><![CDATA[xml]]></configSuffix>
+	</configSuffixes>
+	<enableImports><![CDATA[true]]></enableImports>
+	<configs>
+	</configs>
+	<autoconfigs>
+		<config>src/main/resources/config/spring/context-redis.xml</config>
+		<config>src/main/resources/config/spring/context-transaction.xml</config>
+		<config>src/main/resources/config/spring/context-common.xml</config>
+		<config>src/main/resources/config/spring/context-datasource.xml</config>
+		<config>src/main/resources/config/spring/context-mybatis.xml</config>
+		<config>src/main/webapp/WEB-INF/spring/root-context.xml</config>
+		<config>src/main/resources/config/spring/context-message.xml</config>
+	</autoconfigs>
+	<configSets>
+	</configSets>
+</beansProjectDescription>

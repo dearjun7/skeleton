@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<menuList>
+	<!--  검색  -->	
+	<menu displayType="gnb" allowAuthIds="USR, ADM, PAM, OPT" hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="false">
+		<menuId>gms.menu.gnb.search</menuId>
+		<seqNum>1</seqNum>
+		<accessLink>#gnb1</accessLink>
+		<descMessageId/>
+		<descImgLink/>
+	</menu>
+	
+	<!-- 알람 >
+	<menu displayType="gnb" allowAuthIds="USR, ADM, PAM, OPT" hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="false">
+		<menuId>gms.menu.gnb.alarmmng</menuId>
+		<seqNum>2</seqNum>
+		<accessLink>tgc.onAlamClick()</accessLink>
+		<descMessageId/>
+		<descImgLink/>
+	</menu-->
+	
+	<!-- 태그 관리 >
+	<menu displayType="gnb" allowAuthIds="USR, ADM, PAM, OPT" hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="false">
+		<menuId>gms.menu.gnb.tagmng</menuId>
+		<seqNum>2</seqNum>
+		<accessLink>#gnb4</accessLink>
+		<descMessageId/>
+		<descImgLink/>
+	</menu-->
+	
+	<!-- 즐겨찾기 관리 >
+	<menu displayType="gnb" allowAuthIds="USR, ADM, PAM, OPT" hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="false">
+		<menuId>gms.menu.gnb.favorit</menuId>
+		<seqNum>4</seqNum>
+		<accessLink>#gnb4</accessLink>
+		<descMessageId/>
+		<descImgLink/>
+	</menu-->
+	
+	<!-- 설정 -->
+	<menu displayType="gnb" allowAuthIds="ALL" hasChildNode="true" systemTenantOnly="false" openByNewWindow="false" hasDesc="false">
+		<menuId>gms.menu.gnb.setting</menuId>
+		<seqNum>6</seqNum>
+		<accessLink>tgc.onSettingClick($event)</accessLink>
+		<descMessageId/>
+		<descImgLink/>
+		<!-- 계정 설정 -->
+		<childMenu displayType="gnb" allowAuthIds="ALL" hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="false">
+			<menuId>gms.menu.gnb.setting.account</menuId>
+			<seqNum>1</seqNum>
+			<accessLink>#main/user-account</accessLink>
+			<descMessageId/>
+			<descImgLink/>
+		</childMenu>
+		<!-- 환경 설정 >
+		<childMenu displayType="gnb" allowAuthIds="ADM, OPT" hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="false">
+			<menuId>gms.menu.gnb.setting.env</menuId>
+			<seqNum>2</seqNum>
+			<accessLink>#gnb6</accessLink>
+			<descMessageId/>
+			<descImgLink/>
+		</childMenu-->
+		<!-- 관리자 >
+		<childMenu displayType="gnb" allowAuthIds="ADM, OPT" hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="false">
+			<menuId>gms.menu.gnb.setting.admin</menuId>
+			<seqNum>3</seqNum>
+			<accessLink>#gnb6</accessLink>
+			<descMessageId/>
+			<descImgLink/>
+		</childMenu-->
+		<!-- 도움말 -->
+		<childMenu displayType="gnb" allowAuthIds="ALL" hasChildNode="false" systemTenantOnly="false" openByNewWindow="true" hasDesc="false">
+			<menuId>gms.menu.gnb.setting.help</menuId>
+			<seqNum>4</seqNum>
+			<accessLink>/files/manual/HANDY_GMS_Manual.pdf</accessLink>
+			<descMessageId/>
+			<descImgLink/>
+		</childMenu>
+		<!-- 로그아웃 -->
+		<childMenu displayType="gnb" allowAuthIds="ALL" hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="false">
+			<menuId>gms.menu.gnb.setting.logout</menuId>
+			<seqNum>5</seqNum>
+			<accessLink>tgc.logout()</accessLink>
+			<descMessageId/>
+			<descImgLink/>
+		</childMenu>
+	</menu>
+</menuList>

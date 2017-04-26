@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="system.code">
+	<resultMap id="selectCodeMap" type="com.hs.gms.srv.api.system.code.CodeVO">
+		<result property="tenantId"    column="tenantid" />
+		<result property="code"        column="code" />
+		<result property="pCode"       column="pcode" />
+		<result property="codeName"    column="codename" />
+		<result property="codeDesc"    column="codedesc" />
+		<result property="installFlag" column="installflag" />
+		<result property="dispOrder"   column="disporder" />
+	</resultMap>
+	
+	<sql id="selectCodeListColumn">
+		a.tenantid, a.code, a.pcode, b.codename, a.codedesc, a.installflag, a.disporder
+	</sql>
+	
+	<select id="selectCodeListForCaching" parameterType="Map" resultMap="selectCodeMap">
+		SELECT
+			   <include refid="selectCodeListColumn"/>
+		  FROM gms_code a JOIN gms_codelang b 
+		    			    ON a.tenantid = b.tenantid
+		  				   AND a.code = b.code
+		  				   AND a.pcode = b.pcode
+		 WHERE a.tenantid = #{tenantId}
+		 <if test='pCode == "GMS_REQUEST_STATE_ISSUE" or pCode == "GMS_REQUEST_STATE_PROC"'>
+		   AND a.pcode like CONCAT(#{pCode}, '%')
+		 </if> 
+		 <if test='pCode != "GMS_REQUEST_STATE_ISSUE" and pCode != "GMS_REQUEST_STATE_PROC"'>
+		   AND a.pcode = #{pCode}
+		 </if> 
+		   AND b.lang = #{language}
+      ORDER BY a.disporder, a.pcode, a.code ASC
+	</select>
+	
+	<select id="selectCodeListByParentCode" parameterType="com.hs.gms.std.common.pagination.PaginationQueryParamVO" resultMap="selectCodeMap">
+		SELECT
+			   <include refid="selectCodeListColumn"/>
+		  FROM gms_code a JOIN gms_codelang b 
+		    			    ON a.tenantid = b.tenantid
+		  				   AND a.code = b.code
+		  				   AND a.pcode = b.pcode
+		 WHERE a.tenantid = #{queryParam.tenantId}
+		 <if test="queryParam.pCode != null">
+		   AND a.pcode = #{queryParam.pCode}
+		 </if>
+		   AND b.lang = #{language}
+      ORDER BY  a.pcode, a.disporder, a.code ASC
+      <if test="paginationVO != null">
+      	<include refid="common.sql.paginationConditional">
+      		<property name="pageViewSize" value="#{paginationVO.pageViewSize}"/>
+      		<property name="pageOffSet" value="#{paginationVO.pageOffSet}"/>
+      	</include>
+      </if>
+	</select>
+	
+	<select id="selectCodeTotalCountByParentCode" parameterType="com.hs.gms.std.common.pagination.PaginationQueryParamVO" resultType="int">
+		SELECT
+			   <include refid="common.sql.totalCountColumn"/>
+		  FROM gms_code a JOIN gms_codelang b 
+		    			    ON a.tenantid = b.tenantid
+		  				   AND a.code = b.code
+		  				   AND a.pcode = b.pcode
+		 WHERE a.tenantid = #{queryParam.tenantId}
+		 <if test="queryParam.pCode != null">
+		   AND a.pcode = #{queryParam.pCode}
+		 </if>
+		   AND b.lang = #{language}
+	</select>
+	
+	<select id="selectSomeColumnListInCodeData" parameterType="Map" resultType="String">
+		SELECT
+				<if test="columnName == 'tenantId'">tenantid </if>
+				<if test="columnName == 'pCode'">
+					CASE WHEN pcode like 'GMS_REQUEST_STATE_%_NORMAL' 
+					     THEN REPLACE(pcode, '_NORMAL', '')
+					     ELSE pcode
+                    END 
+				</if>
+		  FROM  gms_code
+	   <where>
+	   	   <if test="columnName == 'pCode'">
+	   			pcode != '0' 
+	   	   </if>
+	   	   <if test="tenantId != null">
+	   	   		AND tenantid = #{tenantId}
+	   	   </if>
+	   </where>
+		   <if test="columnName == 'tenantId'">GROUP BY tenantid</if>
+		   <if test="columnName == 'pCode'">GROUP BY pcode </if>
+		   <if test="columnName == 'tenantId'">ORDER BY tenantid ASC</if>
+		   <if test="columnName == 'pCode'">ORDER BY pcode ASC</if>  
+	</select>
+	
+	<select id="selectCode" parameterType="Map" resultMap="selectCodeMap">
+		SELECT
+			   <include refid="selectCodeListColumn"/>
+		  FROM gms_code a JOIN gms_codelang b 
+		    			    ON a.tenantid = b.tenantid
+		  				   AND a.code = b.code
+		  				   AND a.pcode = b.pcode
+		 WHERE a.tenantid = #{tenantId}
+		   AND a.pcode = #{pCode}
+		   AND a.code = #{code}
+		   AND b.lang = #{language}
+	</select>	
+</mapper>

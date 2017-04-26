@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="personal.language">
+	
+	<select id="selectUserLanguage" parameterType="com.hs.gms.srv.api.account.vo.UserDataVO" resultType="string">
+		SELECT  LEFT(u.locale, 2)
+		  FROM  usr_global u 
+		 WHERE  u.status NOT IN ('4','8')
+		   AND  u.user_id      = #{userId}
+		   AND  u.community_id = #{tenantId}
+	</select>
+	
+	<update id="updateUserLanguage" parameterType="com.hs.gms.srv.api.account.vo.UserDataVO">
+		UPDATE  usr_global u
+		   SET  u.locale = #{language}
+		 WHERE  u.status NOT IN ('4','8')
+		   AND  u.user_id      = #{userId}
+		   AND  u.community_id = #{tenantId}
+	</update>
+</mapper>

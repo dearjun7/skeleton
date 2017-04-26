@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						 http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd">
+
+	<bean id="modelTypeSequence" class="com.hs.gms.std.common.dao.GMSMaxValueIncrementer" scope="singleton">
+		<property name="incrementerName" value="gms_seq_modeltype"/>
+		<property name="columnName" value="seq"/>
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<bean id="modelGroupSequence" class="com.hs.gms.std.common.dao.GMSMaxValueIncrementer" scope="singleton">
+		<property name="incrementerName" value="gms_seq_modelgroup"/>
+		<property name="columnName" value="seq"/>
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<bean id="custattrTmpltSequence" class="com.hs.gms.std.common.dao.GMSMaxValueIncrementer" scope="singleton">
+		<property name="incrementerName" value="gms_seq_custattrtmplt"/>
+		<property name="columnName" value="seq"/>
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<bean id="custattrSequence" class="com.hs.gms.std.common.dao.GMSMaxValueIncrementer" scope="singleton">
+		<property name="incrementerName" value="gms_seq_custattr"/>
+		<property name="columnName" value="seq"/>
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<bean id="procSequence" class="com.hs.gms.std.common.dao.GMSMaxValueIncrementer" scope="singleton">
+		<property name="incrementerName" value="gms_seq_proc"/>
+		<property name="columnName" value="seq"/>
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<bean id="procChangeRequestSequence" class="com.hs.gms.std.common.dao.GMSMaxValueIncrementer" scope="singleton">
+		<property name="incrementerName" value="gms_seq_procchangerequest"/>
+		<property name="columnName" value="seq"/>
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<bean id="objTypeSequence" class="com.hs.gms.std.common.dao.GMSMaxValueIncrementer" scope="singleton">
+		<property name="incrementerName" value="gms_seq_objtype"/>
+		<property name="columnName" value="seq"/>
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<bean id="objSequence" class="com.hs.gms.std.common.dao.GMSMaxValueIncrementer" scope="singleton">
+		<property name="incrementerName" value="gms_seq_obj"/>
+		<property name="columnName" value="seq"/>
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<bean id="attachSequence" class="com.hs.gms.std.common.dao.GMSMaxValueIncrementer" scope="singleton">
+		<property name="incrementerName" value="gms_seq_attach"/>
+		<property name="columnName" value="seq"/>
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<bean id="isoIntroSequence" class="com.hs.gms.std.common.dao.GMSMaxValueIncrementer" scope="singleton">
+		<property name="incrementerName" value="gms_seq_isointro"/>
+		<property name="columnName" value="seq"/>
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<bean id="workRequestSequence" class="com.hs.gms.std.common.dao.GMSMaxValueIncrementer" scope="singleton">
+		<property name="incrementerName" value="gms_seq_workrequest"/>
+		<property name="columnName" value="seq"/>
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<bean id="bultSequence" class="com.hs.gms.std.common.dao.GMSMaxValueIncrementer" scope="singleton">
+		<property name="incrementerName" value="gms_seq_bult"/>
+		<property name="columnName" value="seq"/>
+		<property name="dataSource" ref="dataSource"/>
+	</bean>	
+	
+	<bean id="tagSequence" class="com.hs.gms.std.common.dao.GMSMaxValueIncrementer" scope="singleton">
+		<property name="incrementerName" value="gms_seq_tag"/>
+		<property name="columnName" value="seq"/>
+		<property name="dataSource" ref="dataSource"/>
+	</bean>	
+</beans>

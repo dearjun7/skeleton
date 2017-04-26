@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.padual.com/java/logback.xsd"
+	debug="false" scan="true" scanPeriod="10 seconds">
+	
+	<property name="SERVER_COMPONANT" value="api"/>
+	
+	<if condition='p("env").equals("local")'>
+		<then>
+			<property name="LOG_LEVEL" value="DEBUG"/>
+			<property name="JSON_LOG_LEVEL" value="DEBUG"/>
+			<property name="LOG_HOME" value="C:/gms_logs/${SERVER_COMPONANT}"/>
+		</then>
+	</if>
+	<if condition='p("env").equals("dev")'>
+		<then>
+			<property name="LOG_LEVEL" value="DEBUG"/>
+			<property name="JSON_LOG_LEVEL" value="DEBUG"/>
+			<property name="LOG_HOME" value="/home/handy/app/tomcat/instances/${SERVER_COMPONANT}/logs"/>
+		</then>
+	</if>
+	<if condition='p("env").equals("stg")'>
+		<then>
+			<property name="LOG_LEVEL" value="INFO"/>
+			<property name="JSON_LOG_LEVEL" value="WARN"/>
+			<property name="LOG_HOME" value="/home/handy/app/tomcat/instances/${SERVER_COMPONANT}/logs"/>
+		</then>
+	</if>
+	<if condition='p("env").equals("prd")'>
+		<then>
+			<property name="LOG_LEVEL" value="INFO"/>
+			<property name="JSON_LOG_LEVEL" value="WARN"/>
+			<property name="LOG_HOME" value="/home/handy/app/tomcat/instances/${SERVER_COMPONANT}/logs"/>
+		</then>
+	</if>
+	
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [%logger] - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="ERROUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_HOME}/api/error.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/api/error.log.%d{yyyy-MM-dd}-%i</fileNamePattern>
+			<maxHistory>365</maxHistory>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>1024MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>
+				[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [%logger] - %msg Client ReqStatus Info => requestIP : %X{remoteIP} | requestURI : %X{requestURI} | requestMethod : %X{requestMethod} | requestHeader : %X{headers} | requestBody : %X{body} | requestParams : %X{parameters} |  
+			</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+        	<level>ERROR</level>
+   		</filter>
+	</appender>
+	
+	<appender name="SRVOUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_HOME}/api/server.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/api/server.log.%d{yyyy-MM-dd}-%i</fileNamePattern>
+			<maxHistory>365</maxHistory>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>1024MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [%logger] - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="STDOUT_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+ 		<appender-ref ref="STDOUT"/>
+ 	</appender>
+ 	
+ 	<appender name="SRVOUT_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+ 		<appender-ref ref="SRVOUT"/>
+ 	</appender>
+ 	
+	<logger name="com.hs.gms.srv.api" level="${LOG_LEVEL}"/>
+	<logger name="com.hs.gms.std.common" level="${LOG_LEVEL}"/>
+
+	<!-- Spring Framework -->
+	<logger name="org.springframework" level="INFO" />
+	<logger name="org.springframework.core" level="INFO" />
+	<logger name="org.springframework.beans" level="INFO" />
+	<logger name="org.springframework.context" level="INFO" />
+	<logger name="org.springframework.web" level="INFO" />
+	
+	<!-- JSON Object -->
+	<logger name="net.sf.json" level="${JSON_LOG_LEVEL}"/>
+	
+	<!-- apache commons -->
+	<logger name="org.apache.commons" level="INFO" />
+	<logger name="org.apache.http" level="${LOG_LEVEL}" />
+
+	<!-- apache commons -->
+	<logger name="org.apache.http.wire" level="INFO" />
+
+	<!-- MyBatis -->
+	<logger name="org.mybatis" level="${LOG_LEVEL}" />
+	<logger name="org.apache.ibatis" level="INFO" />
+
+	<root level="${LOG_LEVEL}">
+		<appender-ref ref="STDOUT_ASYNC" />
+		<appender-ref ref="SRVOUT_ASYNC" />
+		<appender-ref ref="ERROUT" />
+	</root>
+</configuration>

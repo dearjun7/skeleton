@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<menuList>
+	<!-- ISO 인증 도입 -->
+	<menu displayType="lnb" allowAuthIds="USR, PAM, ADM" hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="false">
+		<menuId>gms.menu.lnb.isointro</menuId> 
+		<seqNum>0</seqNum>
+		<accessLink>#/main/iso-intro/main</accessLink>
+		<descImgLink></descImgLink>
+	</menu>
+	
+	<!-- 작업 -->
+	<menu displayType="lnb" allowAuthIds="USR, PAM" hasChildNode="true" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+		<menuId>gms.menu.lnb.work</menuId>
+		<seqNum>0</seqNum>
+		<accessLink>#</accessLink>
+		<descMessageId>gms.menu.lnb.work.desc</descMessageId>
+		<descImgLink>/img/icon_gnb_operation.png</descImgLink>
+		<childMenu displayType="lnb" allowAuthIds="USR, PAM" hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+			<menuId>gms.menu.lnb.work.myreqwork</menuId>
+			<seqNum>0</seqNum>
+			<accessLink>#main/work/myreqwork/list</accessLink>
+			<descMessageId>gms.menu.lnb.work.myreqwork.desc</descMessageId>
+			<descImgLink/>
+		</childMenu>
+		<childMenu displayType="lnb" allowAuthIds="USR,  PAM" hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+			<menuId>gms.menu.lnb.work.mywillwork</menuId>
+			<seqNum>1</seqNum>
+			<accessLink>#main/work/mywillwork/list</accessLink>
+			<descMessageId>gms.menu.lnb.work.mywillwork.desc</descMessageId>
+			<descImgLink/>
+		</childMenu>
+		<childMenu displayType="lnb" allowAuthIds="USR, PAM" hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+			<menuId>gms.menu.lnb.work.myworkinfo</menuId>
+			<seqNum>2</seqNum>
+			<accessLink>#main/work/myworkinfo/list</accessLink>
+			<descMessageId>gms.menu.lnb.work.myworkinfo.desc</descMessageId>
+			<descImgLink/>
+		</childMenu>
+		<childMenu displayType="lnb" allowAuthIds="USR, PAM" hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+			<menuId>gms.menu.lnb.work.issueapproval</menuId>
+			<seqNum>3</seqNum>
+			<accessLink>#main/procmng/issue-approval</accessLink>
+			<descMessageId>gms.menu.lnb.work.issueapproval.desc</descMessageId>
+			<descImgLink/>
+		</childMenu>
+	</menu>
+	
+	<!-- 프로세스 조회 -->
+	<menu displayType="lnb" allowAuthIds="USR, PAM" hasChildNode="true" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+		<menuId>gms.menu.lnb.proc</menuId>
+		<seqNum>0</seqNum>
+		<accessLink>#</accessLink>
+		<descMessageId>gms.menu.lnb.proc.desc</descMessageId>
+		<descImgLink>/img/icon_gnb_inquiry.png</descImgLink>
+		<childMenu displayType="lnb" allowAuthIds="USR, PAM" hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+			<menuId>gms.menu.lnb.proc.main</menuId>
+			<seqNum>0</seqNum>
+			<accessLink>#main/proc/dashboard</accessLink>
+			<descMessageId>gms.menu.lnb.proc.main.desc</descMessageId>
+			<descImgLink/>
+		</childMenu>
+		<childMenu displayType="lnb" allowAuthIds="USR, PAM" hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+			<menuId>gms.menu.lnb.proc.iso</menuId>
+			<seqNum>1</seqNum>
+			<accessLink>#main/iso/dashboard</accessLink>
+			<descMessageId>gms.menu.lnb.proc.iso.desc</descMessageId>			
+			<descImgLink/>
+		</childMenu>
+	</menu>
+	
+	<!-- 프로세스관리 -->
+	<menu displayType="lnb" allowAuthIds="PAM" hasChildNode="true" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+		<menuId>gms.menu.lnb.procmng</menuId>
+		<seqNum>0</seqNum>
+		<accessLink>#</accessLink>
+		<descMessageId>gms.menu.lnb.procmng.desc</descMessageId>
+		<descImgLink>/img/icon_gnb_management.png</descImgLink>
+		<childMenu displayType="lnb" allowAuthIds="PAM"	hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+			<menuId>gms.menu.lnb.procmng.info</menuId>
+			<seqNum>0</seqNum>
+			<accessLink>#main/procmng/info</accessLink>
+			<descMessageId>gms.menu.lnb.procmng.info.desc</descMessageId>
+			<descImgLink/>
+		</childMenu>
+		<childMenu displayType="lnb" allowAuthIds="PAM"	hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+			<menuId>gms.menu.lnb.procmng.change</menuId>
+			<seqNum>1</seqNum>
+			<accessLink>#main/procmng/change</accessLink>
+			<descMessageId>gms.menu.lnb.procmng.change.desc</descMessageId>
+			<descImgLink/>
+		</childMenu>
+		<childMenu displayType="lnb" allowAuthIds="PAM"	hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+			<menuId>gms.menu.lnb.procmng.issue</menuId>
+			<seqNum>2</seqNum>
+			<accessLink>#main/procmng/issue</accessLink>
+			<descMessageId>gms.menu.lnb.procmng.issue.desc</descMessageId>
+			<descImgLink/>
+		</childMenu>
+	</menu>
+	
+	<!-- 프로세스 분석 -->
+	<menu displayType="lnb" allowAuthIds="PAM" hasChildNode="true" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+		<menuId>gms.menu.lnb.procanalytics</menuId>
+		<seqNum>0</seqNum>
+		<accessLink>#</accessLink>
+		<descMessageId>gms.menu.lnb.procanalytics.desc</descMessageId>
+		<descImgLink>/img/icon_gnb_analysis.png</descImgLink>
+		<childMenu displayType="lnb" allowAuthIds="PAM"	hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+			<menuId>gms.menu.lnb.procanalytics.dashboard</menuId>
+			<seqNum>0</seqNum>
+			<accessLink>#main/procanalytic/dashboard</accessLink>
+			<descMessageId>gms.menu.lnb.procanalytics.dashboard.desc</descMessageId>
+			<descImgLink/>
+		</childMenu>
+		<childMenu displayType="lnb" allowAuthIds="PAM"	hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="true"> 
+			<menuId>gms.menu.lnb.procanalytics.procesrocess</menuId> 
+			<seqNum>1</seqNum> 
+ 			<accessLink>#main/procanalytic/process-to-process</accessLink>
+ 			<descMessageId>gms.menu.lnb.procanalytics.procesrocess.desc</descMessageId>
+			<descImgLink/>
+ 		</childMenu> 
+		<childMenu displayType="lnb" allowAuthIds="PAM"	hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+			<menuId>gms.menu.lnb.procanalytics.processtoorg</menuId>
+			<seqNum>2</seqNum>
+			<accessLink>#main/procanalytic/process-to-org</accessLink>
+			<descMessageId>gms.menu.lnb.procanalytics.processtoorg.desc</descMessageId>
+			<descImgLink/>
+		</childMenu>
+	</menu>
+	
+	<!-- 공지 -->
+	<menu displayType="lnb" allowAuthIds="USR, PAM, ADM" hasChildNode="true" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+		<menuId>gms.menu.lnb.board</menuId>
+		<seqNum>0</seqNum>
+		<accessLink>#</accessLink>
+		<descMessageId>gms.menu.lnb.board.desc</descMessageId>
+		<descImgLink>/img/icon_gnb_notice.png</descImgLink>
+		<childMenu displayType="lnb" allowAuthIds="USR, PAM, ADM" hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+			<menuId>gms.menu.lnb.board.notice</menuId>
+			<seqNum>0</seqNum>
+			<accessLink>#main/board/notice</accessLink>
+			<descMessageId>gms.menu.lnb.board.notice.desc</descMessageId>
+			<descImgLink/>
+		</childMenu>
+		<childMenu displayType="lnb" allowAuthIds="USR, PAM, ADM" hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+			<menuId>gms.menu.lnb.board.qna</menuId>
+			<seqNum>1</seqNum>
+			<accessLink>#main/board/qna</accessLink>
+			<descMessageId>gms.menu.lnb.board.qna.desc</descMessageId>
+			<descImgLink/>
+		</childMenu>
+		<childMenu displayType="lnb" allowAuthIds="USR, PAM, ADM" hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+			<menuId>gms.menu.lnb.board.faq</menuId>
+			<seqNum>2</seqNum>
+			<accessLink>#main/board/faq</accessLink>
+			<descMessageId>gms.menu.lnb.board.faq.desc</descMessageId>
+			<descImgLink/>
+		</childMenu>
+		<childMenu displayType="lnb" allowAuthIds="USR, PAM, ADM" hasChildNode="false" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+			<menuId>gms.menu.lnb.board.refer</menuId>
+			<seqNum>3</seqNum>
+			<accessLink>#main/board/refer</accessLink>
+			<descMessageId>gms.menu.lnb.board.refer.desc</descMessageId>
+			<descImgLink/>
+		</childMenu>
+	</menu>
+	
+	<!-- 커뮤니티 -->
+	<menu displayType="lnb" allowAuthIds="USR, ADM, PAM" hasChildNode="true" systemTenantOnly="false" hasDesc="true">
+		<menuId>gms.menu.lnb.community</menuId>
+		<seqNum>0</seqNum>
+		<accessLink>#</accessLink>
+		<descMessageId>gms.menu.lnb.community.desc</descMessageId>
+		<descImgLink>/img/icon_gnb_admin.png</descImgLink>
+		<childMenu displayType="lnb" allowAuthIds="USR, ADM, PAM" hasChildNode="false" systemTenantOnly="false" openByNewWindow="true" hasDesc="true">
+			<menuId>gms.menu.lnb.community.square</menuId>
+			<seqNum>0</seqNum>
+			<accessLink>/square/main.do</accessLink>
+			<descMessageId>gms.menu.lnb.community.square.desc</descMessageId>
+			<descImgLink/>
+		</childMenu>
+	</menu>
+	
+	<!-- 시스템 관리 -->
+	<menu displayType="lnb" allowAuthIds="ADM" hasChildNode="true" systemTenantOnly="false" openByNewWindow="false" hasDesc="true">
+		<menuId>gms.menu.lnb.system</menuId>
+		<seqNum>0</seqNum>
+		<accessLink>#</accessLink>
+		<descMessageId>gms.menu.lnb.system.desc</descMessageId>
+		<descImgLink>/img/icon_gnb_admin.png</descImgLink>
+		<childMenu displayType="lnb" allowAuthIds="ADM" hasChildNode="false" systemTenantOnly="false" openByNewWindow="true" hasDesc="true">
+			<menuId>gms.menu.lnb.system.organization</menuId>
+			<seqNum>0</seqNum>
+			<accessLink>/directory-web/org.do</accessLink>
+			<descMessageId>gms.menu.lnb.system.organization.desc</descMessageId>
+			<descImgLink/>
+		</childMenu>
+	</menu>
+	
+	<!-- 업종별 표준 샘플 
+	<menu displayType="lnb" allowAuthIds="ADM" hasChildNode="true" systemTenantOnly="true" openByNewWindow="false" hasDesc="true">
+		<menuId>gms.menu.lnb.businisssample</menuId>
+		<seqNum>0</seqNum>
+		<accessLink>#</accessLink>
+		<descMessageId>gms.menu.lnb.businisssample.desc</descMessageId>
+		<descImgLink></descImgLink>
+		<childMenu displayType="lnb" allowAuthIds="ADM" hasChildNode="false" systemTenantOnly="true" openByNewWindow="false" hasDesc="false">
+			<menuId>gms.menu.lnb.businisssample.registersample</menuId>
+			<seqNum>0</seqNum>
+			<accessLink>#</accessLink>
+			<descMessageId/>
+			<descImgLink/>
+		</childMenu>
+	</menu>-->
+</menuList>

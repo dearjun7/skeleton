@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	
+	<bean id="requestConfigBuilder" class="org.apache.http.client.config.RequestConfig" factory-method="custom">
+        <property name="socketTimeout" value="#{config['gms.restclient.socket.timeout']}" /> 
+        <property name="connectTimeout" value="#{config['gms.restclient.socket.timeout']}" /> 
+        <property name="connectionRequestTimeout" value="5000" />
+	</bean>
+ 
+	<bean id="requestConfig" factory-bean="requestConfigBuilder" factory-method="build" />
+	
+	<bean id="socketConfig" class="org.apache.http.config.SocketConfig" factory-method="custom">
+        <property name="soTimeout" value="#{config['gms.restclient.socket.timeout']}"/>
+        <property name="soLinger" value="#{config['gms.restclient.socket.linger']}" />
+        <property name="soReuseAddress" value="#{config['gms.restclient.socket.reuse_address']}" />
+        <property name="tcpNoDelay" value="true" />
+        <property name="soKeepAlive" value="true" />
+	</bean>
+	
+	<bean id="connectionManager" class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager" destroy-method="shutdown">
+	    <constructor-arg value="2000" type="long" index="0" />
+        <constructor-arg value="MILLISECONDS" type="java.util.concurrent.TimeUnit" index="1" />
+		<property name="maxTotal" value="#{config['gms.restclient.conn_pool.max_total']}" />
+		<property name="defaultMaxPerRoute" value="#{config['gms.restclient.conn_pool.max_per_route']}" />
+		<property name="defaultSocketConfig">
+			<bean factory-bean="socketConfig" factory-method="build" />
+		</property>
+	</bean>
+	
+	<!-- local Reverse Proxy 패킷 캡쳐 용 설정-->
+	<!-- bean id="proxyHost" class="org.apache.http.HttpHost">
+		<constructor-arg value="#{systemProperties['http.proxyHost']}" type="String" index="0" />
+        <constructor-arg value="#{systemProperties['http.proxyPort']}" type="int" index="1" />
+	</bean-->
+	
+	<bean id="httpClientBuilder" class="org.apache.http.impl.client.HttpClientBuilder" factory-method="create">            
+	    <property name="defaultRequestConfig" ref="requestConfig" />
+	    <property name="connectionManager" ref="connectionManager" />
+	    <property name="userAgent" value="GMS_API_SERVER" />
+	    <!-- local Reverse Proxy 패킷 캡쳐 용 설정-->
+	    <!-- property name="proxy" ref="proxyHost" /-->
+	</bean>
+</beans>

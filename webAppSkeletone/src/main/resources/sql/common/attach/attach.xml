@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="common.attach.attach">
+	<resultMap id="selectAttachMap" type="com.hs.gms.srv.api.common.attach.vo.AttachVO">
+		<id     property="attachId"    	   column="attachid" />
+		<result property="tenantId"        column="tenantid" />
+		<result property="attachType"  	   column="attachtype" />
+		<result property="attachDataType"  column="attachdatatype" />
+		<result property="attachName"  	   column="attachname" />
+		<result property="filePath" 	   column="filepath" />
+		<result property="attachContent"   column="attachcontent" />
+		<result property="attachSize"      column="attachsize" />
+		
+		<result property="orgAttachId" 	   column="orgattachid" />
+		<result property="procId" 	       column="procid" />
+		<result property="procVersion"	   column="procversion" />
+		
+		<result property="tmpltId" 	  	   column="tmpltid" />
+		<result property="custAttrId" 	   column="custattrid" />
+		<result property="objId"           column="objid" />
+		<result property="workRequestId"   column="workrequestid" />
+		<result property="bultId" 		   column="bultId" />
+		<result property="isoLang" 		   column="lang" />
+		
+		<result property="isoIntroId" 	   column="isointroid" />
+		<result property="docSeq" 		   column="docseq" />
+		<result property="workSeq" 		   column="workseq" />
+	</resultMap>
+	
+	<sql id="defaultAttachColumns">
+		${alias}attachid,    ${alias}tenantid,      ${alias}attachtype,     ${alias}attachdatatype, ${alias}attachname,  
+		${alias}filepath,    ${alias}attachcontent, ${alias}attachsize,     ${alias}orgattachid,    ${alias}procid,         
+		${alias}procversion, ${alias}tmpltid,       ${alias}custattrid,     ${alias}objid,          ${alias}workrequestid,
+		${alias}bultId,      ${alias}lang, 			${alias}isointroid,     ${alias}docseq,         ${alias}workseq
+	</sql>
+	
+	<insert id="insertAttach" parameterType="com.hs.gms.srv.api.common.attach.vo.AttachVO">
+		INSERT 
+		  INTO  gms_attach
+		  	    (
+		  	     <include refid="defaultAttachColumns"><property name="alias" value=""/></include>
+		  	    )
+		VALUES  (
+				 #{attachId},    #{tenantId},       #{attachType},     #{attachDataType}, #{attachName},  
+				 #{filePath},    #{attachContent},  #{attachSize},     #{orgAttachId},    #{procId},         
+				 #{procVersion}, #{tmpltId},        #{custAttrId},     #{objId},          #{workRequestId},
+				 #{bultId},      #{isoLang},        #{isoIntroId},
+				 <if test='attachDataType == "1" or attachDataType == "7"'>
+				 	(
+				 	 SELECT IF(ISNULL(a.docseq), 1, max(a.docseq)+1 ) 
+				 	   FROM gms_attach a
+				 	  WHERE a.tenantid = #{tenantId}
+				 	  <if test='attachDataType == "1"'>
+				 	    AND a.attachdatatype = '1' 
+				 	    AND a.procid = #{procId} 
+				 	    AND a.procversion = #{procVersion}
+				 	  </if>
+				 	  <if test='attachDataType == "7"'>
+				 	    AND a.attachdatatype = '7'
+				 	    AND a.procid = #{procId}
+				 	    AND a.isointroid = #{isoIntroId}
+				 	  </if>
+				 	),
+				 </if>
+				 <if test='attachDataType != "1" and attachDataType != "7"'>
+				 	null,
+				 </if>       
+				 #{workSeq}
+				)
+	</insert>
+	
+	<insert id="insertCopyProcAttach" parameterType="map">
+		INSERT 
+		  INTO  gms_attach
+		  	    (
+		  	     <include refid="defaultAttachColumns"><property name="alias" value=""/></include>
+		  	    )
+		SELECT
+				attachid,    						tenantid,      attachtype,     attachdatatype, attachname,  
+				filepath,    						attachcontent, attachsize,     orgattachid,    procid,         
+				#{newProcVersion}, 	tmpltid,        custattrid,    objid,          workrequestid,
+				bultId,             lang,           isointroid,    docseq,         workseq
+		  FROM  gms_attach
+		 WHERE  procid = #{procId}
+		   AND  procversion = #{procVersion}
+		   AND  tenantid = #{tenantId}
+	</insert>
+	
+	<update id="updateAttach" parameterType="com.hs.gms.srv.api.common.attach.vo.AttachVO">
+		UPDATE  gms_attach
+		 <set>
+		 	<if test="attachName != null">attachname = #{attachName},</if>
+		 	<if test="attachContent != null">attachcontent = #{attachContent},</if>
+		 	<if test="filePath != null">filepath = #{filePath}</if>
+		 </set>
+		 WHERE  tenantid = #{tenantId}
+		   AND  attachid = #{attachId}
+	</update>
+	
+	<update id="updateAttachForIso" parameterType="map">
+		UPDATE  gms_attach
+		 <set>
+		 	<if test="tarProcVersion != null">procversion = #{tarProcVersion}</if>
+		 </set>
+		 WHERE  tenantid = #{tenantId}
+		   AND  procid = #{procId}
+		   AND  procversion = #{srcProcVersion}
+		   AND  lang = #{isoLang}
+	</update>
+	
+	<update id="updateAttachForIsoIntro" parameterType="com.hs.gms.srv.api.common.attach.vo.AttachVO">
+		UPDATE  gms_attach
+		 <set>
+		 	<if test='attachDataType != null and attachDataType == "7"'>	attachdatatype = '1',					</if>
+		 	<if test="procVersion != null">									procversion = #{procVersion},			</if>
+		 	<if test="tmpltId != null">										tmpltid = #{tmpltId},					</if>
+		 	<if test="custAttrId != null">									custattrid = #{custAttrId},				</if>
+		 	<if test='attachDataType != null and attachDataType == "1"'>	isointroid = #{isoIntroId},				</if>
+		 </set>
+		 WHERE  tenantid = #{tenantId}
+		 <if test="attachId != null">
+		   AND  attachid = #{attachId}
+		 </if>
+		 <if test="attachId == null">
+		 	<if test='attachDataType == "1" and procId != null and procVersion != null'>
+		   	   AND  procid      = #{procId}
+		   	   AND  procversion = #{procVersion}
+			</if>
+			<if test='attachDataType == "7" and isoIntroId != null and procId != null'>
+		   	   AND  isointroid  = #{isoIntroId}
+		   	   AND  procid      = #{procId}
+		   	</if>
+		 </if>
+	</update>
+	
+	<delete id="deleteAttach" parameterType="com.hs.gms.srv.api.common.attach.vo.AttachVO">
+		DELETE
+		  FROM  gms_attach
+		 WHERE  tenantid       = #{tenantId}
+		 <if test="attachId != null">
+		   AND  attachid       = #{attachId}
+		 </if>
+		 <if test="attachId == null">
+		 	<if test='attachDataType == "1"'> 
+		   	   AND  procid      = #{procId}
+		   	   AND  procversion = #{procVersion}
+		   	   <if test="custAttrId != null">
+		   	   	  AND  custattrid  = #{custAttrId}
+		   	   </if>
+		   	   <if test='tmpltId != null'>
+		   	   	  AND  tmpltid     = #{tmpltId}
+		   	   </if>
+		   	</if>
+		  	 <if test='attachDataType == "2"'> 
+		   	   AND  objid    = #{objId}
+		   	</if>
+		   	<if test='attachDataType == "3"'>
+		   	   AND  objid	    = #{objId}
+		   	   <if test='procId != null'>
+		   	   	  AND  procid      = #{procId}
+		   	   </if>
+		   	   <if test='procVersion != null'>
+		   	      AND  procversion = #{procVersion}
+		   	   </if>
+		   	</if>
+		   	<if test='attachDataType == "4"'>
+		       AND  workrequestid = #{workRequestId}
+		   	</if>
+		   	<if test='attachDataType == "5"'>
+		       AND  bultid = #{bultId}
+		   	</if>
+		   	<if test='attachDataType == "6"'>
+		       AND  procid      = #{procId}
+		   	   AND  procversion = #{procVersion}
+		   	   AND  lang        = #{isoLang}
+		   	</if>
+		   	<if test='attachDataType == "7"'>
+		       AND  procid     = #{procId}
+		   	   AND  isointroid = #{isoIntroId}
+		   	   <if test='docSeq != null'>
+		   	   AND  docseq     = #{docSeq}
+		   	   </if>
+		   	</if>
+		   	<if test='attachDataType == "8"'>
+		   	   AND  workrequestid = #{workRequestId}
+		   	   AND  workseq       = #{workSeq}
+		    </if>
+		    <if test='attachDataType == "9"'>
+		   	   AND  isointroid = #{isoIntroId}
+		   	</if>
+		 </if>
+	</delete>
+	
+	<delete id="deleteAttachFromCopiedProc" parameterType="map">
+		DELETE
+		  FROM  gms_attach
+		 WHERE  procid 		= #{procId}
+		   AND  procversion = #{procVersion}
+		   AND  tenantid    = #{tenantId}
+	</delete>
+	
+	<select id="selectAttach" parameterType="map" resultMap="selectAttachMap">
+		SELECT
+				<include refid="defaultAttachColumns"><property name="alias" value=""/></include>
+		  FROM	gms_attach
+	     WHERE  (tenantid = #{attach.tenantId} OR tenantid = '001000000')
+	    <if test="isIncludeWebEditor == false">
+	       AND  attachtype != 'W'
+	    </if>
+	    <if test="attach.attachId != null">
+	       AND  attachid   = #{attach.attachId}
+	    </if>
+	    <if test="attach.attachDataType != null">
+	       AND  attachdatatype = #{attach.attachDataType}
+	    </if>
+	    <if test='attach.attachDataType == "1"'> 
+	   	   AND  procid      = #{attach.procId}
+	   	   AND  procversion = #{attach.procVersion}
+	   	   <if test='attach.tmpltId != null'>
+	   	   	 AND  tmpltid     = #{attach.tmpltId}
+	   	   </if>
+	   	   <if test='attach.custAttrId != null'>
+	   	   	 AND  custattrid  = #{attach.custAttrId}
+	   	   </if>
+	   </if>
+	   <if test='attach.attachDataType == "2"'> 
+	   	   AND  objid	    = #{attach.objId}
+	   </if>
+	   <if test='attach.attachDataType == "3"'>
+	       AND  procid      = #{attach.procId}
+	   	   AND  procversion = #{attach.procVersion}
+	   	   AND  objid	    = #{attach.objId}
+	   	   <if test='attach.custAttrId != null'>
+	   	   	 AND  custattrid  = #{attach.custAttrId}
+	   	   </if>
+	   </if>
+	   <if test='attach.attachDataType == "4"'>
+	       AND  workrequestid = #{attach.workRequestId}
+	   </if>
+	   <if test='attach.attachDataType == "5"'>
+	       AND  bultid = #{attach.bultId}
+	   </if>
+	   <if test='attach.attachDataType == "6"'>
+	       AND  procid      = #{attach.procId}
+	   	   AND  procversion = #{attach.procVersion}
+	   	   AND  lang        = #{attach.isoLang}
+	   </if>
+	   <if test='attach.attachDataType == "7"'>
+	       AND  procid     = #{attach.procId}
+	   	   AND  isointroid = #{attach.isoIntroId}
+	   	   <if test='attach.docSeq != null'>
+	   	   	  AND  docseq  = #{attach.docSeq}
+	   	   </if>
+	   </if>
+	   <if test='attach.attachDataType == "8"'>
+	   	   AND  workrequestid = #{attach.workRequestId}
+	   	   AND  workseq       = #{attach.workSeq}
+	   </if>
+	   <if test='attachDataType == "9"'>
+	   	   AND  isointroid = #{isoIntroId}
+	   </if>
+	</select>
+	
+	<select id="selectAttachByTenantId" parameterType="map" resultMap="selectAttachMap">
+		SELECT
+				<include refid="defaultAttachColumns"><property name="alias" value=""/></include>
+		  FROM	gms_attach
+	     WHERE  tenantid = #{tenantId} 
+	</select>
+	
+	<select id="selectAttachWebEditorHTML" parameterType="com.hs.gms.srv.api.common.attach.vo.AttachVO" resultMap="selectAttachMap">
+		SELECT
+				<include refid="defaultAttachColumns"><property name="alias" value=""/></include>
+		  FROM	gms_attach
+	     WHERE  (tenantid   = #{tenantId} OR tenantid = '001000000')
+	       AND  attachtype = 'W'
+	    <if test="attachId != null">
+	       AND  attachid   = #{attachId}
+	    </if>
+	    <if test="attachDataType != null">
+	       AND  attachdatatype = #{attachDataType}
+	    </if>
+	    <if test='attachDataType == "1"'> 
+	   	   AND  procid      = #{procId}
+	   	   AND  procversion = #{procVersion}
+	   	   <if test='tmpltId != null'>
+	   	   	 AND  tmpltid     = #{tmpltId}
+	   	   </if>
+	   	   <if test='custAttrId != null'>
+	   	   	 AND  custattrid  = #{custAttrId}
+	   	   </if>
+	   </if>
+	   <if test='attachDataType == "2"'> 
+	   	   AND  objid	    = #{objId}
+	   </if>
+	   <if test='attachDataType == "3"'>
+	       AND  procid      = #{procId}
+	   	   AND  procversion = #{procVersion}
+	   	   AND  objid	    = #{objId}
+	   	   <if test='custAttrId != null'>
+	   	   	 AND  custattrid  = #{custAttrId}
+	   	   </if>
+	   </if>
+	   <if test='attachDataType == "4"'>
+	       AND  workrequestid = #{workRequestId}
+	   </if>
+	   <if test='attachDataType == "5"'>
+	       AND  bultid = #{bultId}
+	   </if>
+	   <if test='attachDataType == "6"'>
+	       AND  procid      = #{procId}
+	   	   AND  procversion = #{procVersion}
+	   	   AND  lang        = #{isoLang}
+	   </if>
+	   <if test='attachDataType == "7"'>
+	       AND  procid     = #{procId}
+	   	   AND  isointroid = #{isoIntroId}
+	   	   <if test='docSeq != null'>
+	   	   	  AND  docseq  = #{docSeq}
+	   	   </if>
+	   </if>
+	   <if test='attachDataType == "8"'>
+	   	   AND  workrequestid = #{workRequestId}
+	   	   AND  workseq       = #{workSeq}
+	   </if>
+	   <if test='attachDataType == "9"'>
+	   	   AND  isointroid = #{isoIntroId}
+	   </if>
+	 ORDER BY attachid DESC
+	 LIMIT 1
+	</select>
+	
+	<select id="selectAttachIdList" parameterType="map" resultType="com.hs.gms.srv.api.common.attach.vo.AttachStorageDownloadInfoVO">
+		SELECT
+				CASE WHEN attachtype = 'F'
+				     THEN CONCAT('${apiDomain}','${downloadURIContext}', '/', attachid) 
+				     ELSE '' 
+				END AS downloadURL,
+				attachtype,
+				attachid,
+				attachname,
+				attachcontent,
+				attachsize
+		  FROM  gms_attach
+	     WHERE  tenantid    = #{param.tenantId}
+	       AND  attachtype != 'W'
+	   <if test="param.attachDataType != null">
+	       AND  attachdatatype = #{param.attachDataType}
+	   </if>
+	   <if test='param.attachDataType == "1"'> 
+	   	   AND  procid      = #{param.procId}
+	   	   AND  procversion = #{param.procVersion}
+	   	   AND  tmpltid     = #{param.tmpltId}
+	   	   AND  custattrid  = #{param.custAttrId}
+	   </if>
+	   <if test='param.attachDataType == "2"'> 
+	   	   AND  objid	    = #{param.objId}
+	   	   AND  tmpltid     = #{param.tmpltId}
+	   	   AND  custattrid  = #{param.custAttrId}
+	   </if>
+	   <if test='param.attachDataType == "3"'>
+	       AND  procid      = #{param.procId}
+	   	   AND  procversion = #{param.procVersion}
+	   	   AND  objid	    = #{param.objId}
+	   	   AND  tmpltid     = #{param.tmpltId}
+	   	   AND  custattrid  = #{param.custAttrId}
+	   </if>
+	   <if test='param.attachDataType == "4"'> 
+	   	   AND  workrequestid = #{param.workRequestId}
+	   </if>
+	   <if test='param.attachDataType == "5"'> 
+	   	   AND  bultid = #{param.bultId}
+	   </if>
+	   <if test='param.attachDataType == "6"'>
+	       AND  procid      = #{procId}
+	   	   AND  procversion = #{procVersion}
+	   	   AND  lang        = #{isoLang}
+	   </if>
+	   <if test='param.attachDataType == "7"'>
+	       AND  procid     = #{procId}
+	   	   AND  isointroid = #{isoIntroId}
+	   	   <if test='docSeq != null'>
+	   	   	  AND  docseq  = #{docSeq}
+	   	   </if>
+	   </if>
+	   <if test='param.attachDataType == "8"'>
+	   	   AND  workrequestid = #{workRequestId}
+	   	   AND  workseq       = #{workSeq}
+	   </if>
+	   <if test='param.attachDataType == "9"'>
+	   	   AND  isointroid = #{isoIntroId}
+	   </if>
+	     ORDER BY attachid DESC
+	</select>
+	
+	<select id="selectProcCustAttrAttachUrl" parameterType="map" resultType="com.hs.gms.srv.api.common.attach.vo.AttachCustAttrVO">
+		SELECT
+				CASE WHEN a.attachtype = 'F'
+				     THEN CONCAT('${apiDomain}','${downloadURIContext}', '/', a.attachid) 
+				     ELSE '' 
+				END AS downloadURL,
+				a.attachtype,
+				a.attachid,
+				a.attachname,
+				a.attachcontent,
+				a.attachsize,
+				a.procid,
+				a.procversion,
+				a.tmpltid,
+				a.custattrid,
+				a.objid,
+				CASE
+					WHEN cl.custattrname IS NULL THEN c.custattrname 
+					ELSE cl.custattrname 
+				END AS custattrname,
+				CASE 
+					WHEN bm.userid IS NULL THEN 0 
+					ELSE 1 
+				END AS favorite
+		  FROM  gms_attach a
+		 INNER JOIN	gms_proc p
+		    ON	p.tenantid = a.tenantid
+		   AND	p.procid = a.procid
+		   AND	p.procversion = a.procversion
+		 INNER JOIN	gms_proctmplt pt
+		    ON	pt.tenantid = p.tenantid
+		   AND	pt.procid = p.procid
+		   AND	pt.procversion = p.procversion
+		   AND	pt.tmpltid = a.tmpltid
+		 INNER JOIN gms_custattr c
+		    ON	c.tenantid = pt.tenantid
+		   AND	c.tmpltid = pt.tmpltid
+		   AND	c.tmpltversion = pt.tmpltversion
+		   AND	c.custattrid = a.custattrid
+		  LEFT OUTER JOIN	gms_custattrlang cl
+		    ON	cl.tenantid = c.tenantid 
+		   AND	cl.tmpltid = c.tmpltid
+		   AND	cl.tmpltversion = c.tmpltversion
+		   AND	cl.custattrid = c.custattrid
+		   AND	cl.lang = #{lang}
+		  LEFT OUTER JOIN	gms_bookmark bm
+		    ON	bm.tenantid = a.tenantid
+		   AND	bm.userid = #{userId}
+		   AND	bm.bookmarktype = 'F'
+		   AND	bm.bookmarktarget = a.attachid 
+		 WHERE  a.tenantid = #{tenantId}
+		   AND  a.attachtype != 'W'
+	       AND	(
+	       			a.procid = #{procId}
+	       			
+	       			OR
+	       			
+					a.procid in (
+		       						SELECT	procid 
+		       						  FROM	gms_proc
+		       						 WHERE	parentid = #{procId}
+		       						   AND	actyn = 'Y'
+	       						)
+				)	       			
+	       AND	a.procversion = #{procVersion}
+	       AND	a.attachdatatype in ('1', '3')
+	     ORDER BY a.attachid DESC
+	</select>
+</mapper>
